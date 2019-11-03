@@ -4,7 +4,7 @@ The ESP sensor node library implements a flexible framework for managing timed t
 
 ## Installation
 
-Just clone the repository from [here](https://github.com/dpickem/ESP_Sensor_Node.git)
+Clone the repository from [here](https://github.com/dpickem/ESP_Sensor_Node.git)
 
 ## Dependencies
 
@@ -38,10 +38,22 @@ The sensor node framework has a number of 2nd and 3rd party dependencies which i
 The easiest way to get started is to deploy the main example sketch, which should work out of the box after setting Wifi and MQTT credentials. The sketch and task framework is set up such that connected sensors are automatically recognized and setup (with the exception of motion sensors which need to be activated via a flag in config.h).
 
 ### Deploying a sensor node.
-* Set Wifi credentials.
-* Set MQTT broker credentials.
+
+* Set Wifi and MQTT broker credentials in the config file of the MQTT interface class.
+* Ensure that an MQTT broker is running.
+* Compile and upload the main sketch to an ESP8266 or ESP32 (untested) microcontroller.
+* Watch the data stream to your MQTT broker.
 
 ### Adding a new task.
+
+* Add a new task declaration to the tasks.h file.
+* Each new task class needs to declare and implement the following three
+  functions:
+  * bool is_connected(): To determine if a sensor is connected.
+  * bool setup_helper(): To setup the sensor and determine if the setup was successful.
+  * void run_helper(): To execute the data collection step in a non-blocking way. This can either be accomplished by taking a sensor reading very quickly or by asynchronously measuring data (an example of asynchronous measurements is shown in the class SGP30SensorDataCollector).
+* Implement each required function for the new task in tasks.cpp.
+* Instantiate an instance of the new task in main.ino and add the task via add_task() in the Arduino setup method. The add_task() methodwill take care of setting the task up and adding it to the list of executable tasks.
 
 ### Version History
 
